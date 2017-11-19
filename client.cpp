@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
@@ -24,7 +25,7 @@ int main() {
     struct hostent *host;
     struct sockaddr_in server_addr;
 
-    char *fname = "task.txt";
+    string fname = "task.txt";
     string line;
 
     /* [1] Open input file */
@@ -54,7 +55,7 @@ int main() {
         /* [3] Read file line by line*/
         while (getline(infile, line)) {
             cout << "[Clear] Read and send \"" << line << "\"" << endl;
-            send(sock, line, line.length());
+            send(sock, line.c_str(), line.length());
 
             /* */
             cout << "[Receive]" << endl;
