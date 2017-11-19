@@ -73,31 +73,21 @@ int main() {
         cout << "[Receive] " << recv_data << endl;
         fflush(stdout);
 
-        switch (recv_data[0]) {
-            case '1' :
-                string line;
-                ifstream infile(pfile);
+        if(recv_data[0] == '1') {
+            string line;
+            ifstream infile(pfile);
 
-                if (infile.is_open()) {
-                    cout << "[Clear] Success to open " << pfile << endl;
+            if (infile.is_open()) {
+                cout << "[Clear] Success to open " << pfile << endl;
 
-                    while (getline(infile, line)) {
-                        cout << "[Clear] Read and send <" << line << ">" << endl;
-                        send(sock, line.c_str(), line.length(), 0);
-                    }
+                while (getline(infile, line)) {
+                    cout << "[Clear] Read and send <" << line << ">" << endl;
+                    send(sock, line.c_str(), line.length(), 0);
                 }
-                break;
-            case '2' :
-                break;
-            case '3' :
-                break;
-            case '4' :
-                break;
-            case '5' :
-                cout << "[Exit]" << endl;
-                break;
-            default:
-                break;
+           }
+        }
+        if(recv_data[0] == '5') {
+            break;
         }
 
     }
