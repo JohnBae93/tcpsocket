@@ -99,6 +99,7 @@ int main() {
             default:
                 break;
 
+>>>>>>>>> Temporary merge branch 2
         }
 
     }
