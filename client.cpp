@@ -59,11 +59,11 @@ int main() {
             send(sock, line.c_str(), line.length(), 0);
 
             /* */
-            cout << "[Receive]" << endl;
-            while (bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0) > 0) {
-                cout << recv_data << endl;
-                send(sock, "ok", 2, 0);
-            }
+//            cout << "[Receive]" << endl;
+//            while (bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0) > 0) {
+//                cout << recv_data << endl;
+//                send(sock, "ok", 2, 0);
+//            }
         }
 
 
