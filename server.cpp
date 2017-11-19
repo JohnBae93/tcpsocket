@@ -81,6 +81,7 @@ int main() {
                 cout << "[Clear] Success to open " << pfile << endl;
 
                 while (getline(infile, line)) {
+                    line[line.length() - 1] = '\0';
                     cout << "[Clear] Read and send <" << line << ">" << endl;
                     send(sock, line.c_str(), line.length(), 0);
                 }
