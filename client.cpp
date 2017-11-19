@@ -30,7 +30,7 @@ int main() {
 
     /* [1] Open input file */
     ifstream infile(fname);
-    if (infile.is_open) {
+    if (infile.is_open()) {
         cout << "[Clear] Success to open " << fname << endl;
 
         /* [2] Create socket*/

@@ -19,7 +19,7 @@
 
 using namespace std;
 
-void readProducts(char *fname, sock) {
+void readProducts(char *fname, int sock) {
 
 }
 
@@ -28,7 +28,7 @@ int main() {
     char send_data[BYTE_MAX], recv_data[BYTE_MAX];
 
     struct sockaddr_in server_addr, client_addr;
-    int sin_size;
+    unsigned sin_size;
 
     char *pfile = "products.txt";
     char *ofile = "orders.txt";
@@ -73,12 +73,12 @@ int main() {
              << " , " << ntohs(client_addr.sin_port) << endl;
 
         while (1) {
-            bytes_recieved = recv(connected, recv_data, BYTE_MAX, 0);
+            bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
             recv_data[bytes_recieved] = '\0';
 
             cout << "[Receive] " << recv_data << endl;
             fflush(stdout);
-            if(recv_data == '5')
+            if(recv_data[0] == '5')
                 break;
 
         }
