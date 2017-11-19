@@ -73,24 +73,24 @@ int main() {
         cout << "[Receive] " << recv_data << endl;
         fflush(stdout);
 
-        if(recv_data[0] == '1') {
-            string line;
-            ifstream infile(pfile);
-
-            if (infile.is_open()) {
-                cout << "[Clear] Success to open " << pfile << endl;
-
-                while (getline(infile, line)) {
-                    line[line.length() - 1] = '\0';
-                    cout << "[Clear] Read and send <" << line << ">" << endl;
-                    send(sock, line.c_str(), line.length(), 0);
-                    recv(sock, recv_data, BYTE_MAX, 0);
-                }
-            }
-        }
-        if(recv_data[0] == '5') {
-            break;
-        }
+//        if(recv_data[0] == '1') {
+//            string line;
+//            ifstream infile(pfile);
+//
+//            if (infile.is_open()) {
+//                cout << "[Clear] Success to open " << pfile << endl;
+//
+//                while (getline(infile, line)) {
+//                    line[line.length() - 1] = '\0';
+//                    cout << "[Clear] Read and send <" << line << ">" << endl;
+//                    send(sock, line.c_str(), line.length(), 0);
+//                    recv(sock, recv_data, BYTE_MAX, 0);
+//                }
+//            }
+//        }
+//        if(recv_data[0] == '5') {
+//            break;
+//        }
 
     }
 
