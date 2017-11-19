@@ -16,6 +16,8 @@
 #define BYTE_MAX 1024
 #define PORT 5000
 
+using namespace std;
+
 void readProducts(char *fname, sock) {
 
 }

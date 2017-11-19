@@ -16,6 +16,8 @@
 #define BYTE_MAX 1024
 #define PORT 5000
 
+using namespace std;
+
 int main() {
     int sock, bytes_recieved;
     char recv_data[BYTE_MAX];
