@@ -20,7 +20,18 @@
 using namespace std;
 
 void readProducts(char *fname, int sock) {
+    string line;
+    ifstream infile(fname);
 
+    if(infile.is_open()) {
+        cout << "[Clear] Success to open " << fname <<endl;
+
+        while(getline(infile, line)) {
+            cout << "[Clear] Read and send <" << line << ">" << endl;
+            send(sock, line.c_str(), line.length(), 0);
+        }
+    }
+    return;
 }
 
 int main() {
@@ -68,7 +79,7 @@ int main() {
     sock = accept(lsock, (struct sockaddr *) &client_addr, &sin_size);
 
     cout << "I got a connection from (" << inet_ntoa(client_addr.sin_addr)
-         << " , " << ntohs(client_addr.sin_port) << endl;
+         << " , " << ntohs(client_addr.sin_port) << ")"<< endl;
 
     while (1) {
         bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
@@ -76,6 +87,10 @@ int main() {
 
         cout << "[Receive] " << recv_data << endl;
         fflush(stdout);
+
+        if (recv_data[0] == '1'){
+            readProducts(pfile, sock);
+        }
         if (recv_data[0] == '5') {
             break;
         }
