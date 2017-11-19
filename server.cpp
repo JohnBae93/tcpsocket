@@ -64,24 +64,23 @@ int main() {
     fflush(stdout);
 
 
+    sin_size = sizeof(struct sockaddr_in);
+    sock = accept(lsock, (struct sockaddr *) &client_addr, &sin_size);
+
+    cout << "I got a connection from (" << inet_ntoa(client_addr.sin_addr)
+         << " , " << ntohs(client_addr.sin_port) << endl;
+
     while (1) {
+        bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
+        recv_data[bytes_recieved] = '\0';
 
-        sin_size = sizeof(struct sockaddr_in);
-        sock = accept(lsock, (struct sockaddr *) &client_addr, &sin_size);
-
-        cout << "I got a connection from (" << inet_ntoa(client_addr.sin_addr)
-             << " , " << ntohs(client_addr.sin_port) << endl;
-
-        while (1) {
-            bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
-            recv_data[bytes_recieved] = '\0';
-
-            cout << "[Receive] " << recv_data << endl;
-            fflush(stdout);
-            if(recv_data[0] == '5')
-                break;
-
+        cout << "[Receive] " << recv_data << endl;
+        fflush(stdout);
+        if (recv_data[0] == '5') {
+            break;
         }
+
+
     }
 
     close(lsock);
