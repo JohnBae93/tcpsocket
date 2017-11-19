@@ -64,7 +64,7 @@ int main() {
     sock = accept(lsock, (struct sockaddr *) &client_addr, &sin_size);
 
     cout << "I got a connection from (" << inet_ntoa(client_addr.sin_addr)
-         << " , " << ntohs(client_addr.sin_port) << ")"<< endl;
+         << " , " << ntohs(client_addr.sin_port) << ")" << endl;
 
     while (1) {
         bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
@@ -73,32 +73,33 @@ int main() {
         cout << "[Receive] " << recv_data << endl;
         fflush(stdout);
 
-        switch(recv_data[0]) {
-            case "1" :
+        switch (recv_data[0]) {
+            case '1' :
                 string line;
                 ifstream infile(pfile);
 
-                if(infile.is_open()) {
-                    cout << "[Clear] Success to open " << fname <<endl;
+                if (infile.is_open()) {
+                    cout << "[Clear] Success to open " << pfile << endl;
 
-                    while(getline(infile, line)) {
+                    while (getline(infile, line)) {
                         cout << "[Clear] Read and send <" << line << ">" << endl;
                         send(sock, line.c_str(), line.length(), 0);
                     }
                 }
                 break;
-            case "2" :
+            case '2' :
                 break;
-            case "3" :
+            case '3' :
                 break;
-            case "4" :
+            case '4' :
                 break;
-            case "5" :
+            case '5' :
                 cout << "[Exit]" << endl;
+                break;
+            default:
                 break;
 
         }
-
     }
 
     close(lsock);
