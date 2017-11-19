@@ -60,7 +60,6 @@ int main() {
             /* */
             cout << "[Receive]" << endl;
             while (bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0) > 0) {
-                recv_data[bytes_recieved] = '\0';
                 cout << recv_data << endl;
             }
         }
