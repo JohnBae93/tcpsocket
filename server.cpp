@@ -89,9 +89,9 @@ int main() {
 //                }
 //            }
 //        }
-//        if(recv_data[0] == '5') {
-//            break;
-//        }
+        if(recv_data[0] == '5') {
+            break;
+        }
 
     }
 
