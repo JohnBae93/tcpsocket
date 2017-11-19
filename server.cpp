@@ -40,7 +40,7 @@ int main() {
     }
 
     if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, &True, sizeof(int)) == -1) {
-        perror("[Error] Fail to set sock option");
+        perror("[Error] Fail to set sock option\n");
         exit(1);
     }
 
@@ -51,12 +51,12 @@ int main() {
 
     if (bind(lsock, (struct sockaddr *) &server_addr, sizeof(struct sockaddr))
         == -1) {
-        perror("[Error] Fail to bind");
+        perror("[Error] Fail to bind\n");
         exit(1);
     }
 
     if (listen(lsock, 5) == -1) {
-        perror("[Error] Fail to Listen");
+        perror("[Error] Fail to Listen\n");
         exit(1);
     }
 
@@ -79,8 +79,6 @@ int main() {
         if (recv_data[0] == '5') {
             break;
         }
-
-
     }
 
     close(lsock);

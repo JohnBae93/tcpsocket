@@ -48,13 +48,13 @@ int main() {
 
         if (connect(sock, (struct sockaddr *) &server_addr,
                     sizeof(struct sockaddr)) == -1) {
-            perror("[Error] Fail to connect server");
+            perror("[Error] Fail to connect server\n");
             exit(1);
         }
 
         /* [3] Read file line by line*/
         while (getline(infile, line)) {
-            cout << "[Clear] Read and send \"" << line << "\"" << endl;
+            cout << "[Clear] Read and send <" << line << ">" << endl;
             send(sock, line.c_str(), line.length(), 0);
 
             /* */
