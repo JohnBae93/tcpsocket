@@ -29,7 +29,7 @@ int main() {
     string line;
 
     /* [1] Open input file */
-    ifstrem infile(fname);
+    ifstrem infile("task.txt");
     if (infile.isopen) {
         cout << "[Clear] Success to open " << fname << endl;
 
@@ -55,7 +55,7 @@ int main() {
         /* [3] Read file line by line*/
         while (getline(infile, line)) {
             cout << "[Clear] Read and send \"" << line << "\"" << endl;
-            send(sock, line.c_str(), line.length());
+            send(sock, line.c_str(), line.length(),0);
 
             /* */
             cout << "[Receive]" << endl;
