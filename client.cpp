@@ -55,7 +55,7 @@ int main() {
         /* [3] Read file line by line*/
         while (getline(infile, line)) {
             cout << "[Clear] Read and send \"" << line << "\"" << endl;
-            send(sock, line.c_str(), line.length(),0);
+            send(sock, line.c_str(), line.length());
 
             /* */
             cout << "[Receive]" << endl;
