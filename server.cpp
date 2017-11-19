@@ -98,7 +98,6 @@ int main() {
                 break;
 
         }
-
     }
 
     close(lsock);
