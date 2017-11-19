@@ -30,7 +30,7 @@ int main() {
 
     /* [1] Open input file */
     ifstream infile(fname);
-    if (infile.isopen) {
+    if (infile.is_open) {
         cout << "[Clear] Success to open " << fname << endl;
 
         /* [2] Create socket*/
@@ -55,7 +55,7 @@ int main() {
         /* [3] Read file line by line*/
         while (getline(infile, line)) {
             cout << "[Clear] Read and send \"" << line << "\"" << endl;
-            send(sock, line.c_str(), line.length());
+            send(sock, line.c_str(), line.length(), 0);
 
             /* */
             cout << "[Receive]" << endl;
