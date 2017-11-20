@@ -21,7 +21,7 @@
 using namespace std;
 
 int main() {
-    vector <vector<int> > orders;
+    vector <vector<string> > orders;
     int lsock, sock, bytes_recieved, True = 1;
     char recv_data[BYTE_MAX];
     string send_data;
@@ -31,9 +31,9 @@ int main() {
     char *pfname = "products.txt";
     char *ofname = "orders.txt";
 
-    int order_id;
-    int product_id;
-    int cancel_id;
+    string order_id;
+    string product_id;
+    string cancel_id;
     /*[1] Create listen socket*/
     if ((lsock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("[Error] Fail to create socket\n");
@@ -107,9 +107,10 @@ int main() {
 
                 if (infile.is_open()) {
                     cout << "[Clear] Success to open " << ofname << endl;
-
+                    send_data = "";
                     while (getline(infile, line)) {
                         send_data.append(line);
+                        cout << "getline" << line << endl;
                         send_data.append("\n");
                     }
                     send(sock, send_data.c_str(), send_data.length(), 0);
@@ -141,9 +142,9 @@ int main() {
                     if (outfile.is_open()) {
                         cout << "[Clear] Success to open " << ofname << endl;
                         pos = order.find_first_of(" ", pre_pose);
-                        order_id = atoi(order.substr(pre_pose, pos - pre_pose).c_str());
+                        order_id = order.substr(pre_pose, pos - pre_pose);
                         pre_pose = pos + 1;
-                        product_id = atoi(order.substr(pre_pose, pos - pre_pose).c_str());
+                        product_id = order.substr(pre_pose, pos - pre_pose);
                         outfile << product_id << " " << order_id << '\n';
 
                         outfile.close();
@@ -164,7 +165,7 @@ int main() {
                 }
 
             }
-            if (recv_date == '4') {
+            if (recv_data[0] == '4') {
                 send(sock, "ok", 2, 0);
                 bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
                 recv_data[bytes_recieved] = '\0';
@@ -177,20 +178,20 @@ int main() {
                 if (cancel.substr(pre_pose, pos).compare("Cancel_Order") == 0) {
                     pre_pose = pos + 1;
 
-                    vector<int> s;
+                    vector<string> s;
                     s.resize(2);
                     string line;
                     ifstream infile(ofname);
                     if (infile.is_open()) {
                         cout << "[Clear] Success to open " << ofname << endl;
-                        pos = order.find_first_of(" ", pre_pose);
-                        cancel_id = atoi(cancel.substr(pre_pose, pos - pre_pose).c_str());
+                        pos = cancel.find_first_of(" ", pre_pose);
+                        cancel_id = cancel.substr(pre_pose, pos - pre_pose);
 
                         while (getline(infile, line)) {
-                            pose = line.find_first_of(" ", 0);
+                            pos = line.find_first_of(" ", 0);
                             pre_pose = pos + 1;
-                            product_id = atoi(line.substr(0, pos).c_str());
-                            order_id = atoi(line.substr(pre_pose).c_str());
+                            product_id = line.substr(0, pos);
+                            order_id = line.substr(pre_pose);
                             if (order_id == cancel_id) {
                                 isFind = 1;
                             } else {
@@ -199,7 +200,7 @@ int main() {
                                 orders.push_back(s);
                             }
                         }
-                        outfile.close();
+                        infile.close();
                         if (isFind == 0) {
                             string result = "Your ";
                             result.append(cancel_id);
@@ -210,9 +211,10 @@ int main() {
                             ofstream outfile;
                             outfile.open(ofname);
                             for (int i = 0; i < orders.size(); ++i) {
-                                order = orders[i];
-                                outfile << order[0] << " " << order[1] << '\n';
+                                s = orders[i];
+                                outfile << s[0] << " " << s[1] << '\n';
                             }
+                            outfile.close();
 
                             string result = "Your order has been been cancel!\n";
                             send(sock, result.c_str(), result.length(), 0);
