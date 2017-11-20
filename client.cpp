@@ -54,16 +54,15 @@ int main() {
 
         /* [3] Read file line by line*/
         while (getline(infile, line)) {
-            line[line.length() - 1] = '\0';
-            cout << "[Clear] Read and send <" << line << ">" << endl;
+            cout << "[Clear] Read and send " << line << endl;
             send(sock, line.c_str(), line.length(), 0);
 
             /* */
-//            cout << "[Receive]" << endl;
-//            while (bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0) > 0) {
-//                cout << recv_data << endl;
-//                send(sock, "ok", 2, 0);
-//            }
+           cout << "[Receive]" << endl;
+           bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
+           recv_data[bytes_recieved] = '\0';
+           cout << recv_data << endl;
+
         }
 
 
