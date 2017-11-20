@@ -25,7 +25,7 @@ int main() {
     struct hostent *host;
     struct sockaddr_in server_addr;
 
-    char* fname = "task.txt";
+    char *fname = "task.txt";
     string line;
 
     /* [1] Open input file */
@@ -58,10 +58,10 @@ int main() {
             send(sock, line.c_str(), line.length(), 0);
 
             /* */
-           cout << "[Receive]" << endl;
-           bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
-           recv_data[bytes_recieved] = '\0';
-           cout << recv_data << endl;
+            cout << "[Receive]" << endl;
+            bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
+            recv_data[bytes_recieved] = '\0';
+            cout << recv_data << endl;
 
         }
 
