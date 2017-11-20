@@ -27,14 +27,14 @@ int main() {
     struct sockaddr_in server_addr, client_addr;
     unsigned sin_size;
 
-    string *pfname = "products.txt";
-    string *ofname = "orders.txt";
+    char* pfname = "products.txt";
+    char* ofname = "orders.txt";
 
     int pos = 0, pre_pos = 0;
     string line; // get line from input file
-    vector <vector<string>> orders;
+    vector <vector<string> > orders;
     string order; // make order string
-    string cancle; // cancle string
+    string cancel; // cancle string
     string order_id;
     string product_id;
     string cancel_id;
@@ -76,7 +76,7 @@ int main() {
         sin_size = sizeof(struct sockaddr_in);
         sock = accept(lsock, (struct sockaddr *) &client_addr, &sin_size);
 
-        cout << "I got a connection from (" << inet_ntoa(client_addr.sin_addr)
+        cout << "\nI got a connection from (" << inet_ntoa(client_addr.sin_addr)
              << " , " << ntohs(client_addr.sin_port) << ")" << endl;
 
         /* [3] Communicate */
@@ -136,17 +136,17 @@ int main() {
 
             /* [3-3] Make an order */
             if (recv_data[0] == '3') {
-                send(sock, "OK\n", 2, 0);
+                send(sock, "OK\n", 3, 0);
                 bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
                 recv_data[bytes_recieved] = '\0';
 
                 cout << "[Receive] " << recv_data << endl;
 
                 order = recv_data;
-                pre_pose = 0;
-                pos = order.find_first_of(" ", pre_pose);
-                if (order.substr(pre_pose, pos).compare("Make_An_Order") == 0) {
-                    pre_pose = pos + 1;
+                pre_pos = 0;
+                pos = order.find_first_of(" ", pre_pos);
+                if (order.substr(pre_pos, pos).compare("Make_An_Order") == 0) {
+                    pre_pos = pos + 1;
 
                     ofstream outfile;
                     outfile.open(ofname, ofstream::out | ofstream::app);
@@ -154,16 +154,17 @@ int main() {
                     if (outfile.is_open()) {
                         cout << "[Clear] Success to open " << ofname << endl;
 
-                        pos = order.find_first_of(" ", pre_pose);
-                        order_id = order.substr(pre_pose, pos - pre_pose);
-                        pre_pose = pos + 1;
+                        pos = order.find_first_of(" ", pre_pos);
+                        order_id = order.substr(pre_pos, pos - pre_pos);
+                        pre_pos = pos + 1;
 
-                        product_id = order.substr(pre_pose, pos - pre_pose);
+                        product_id = order.substr(pre_pos, pos - pre_pos);
                         outfile << product_id << " " << order_id << '\n';
                         outfile.close();
 
                         result = "Your order has been made!\n";
                         send(sock, result.c_str(), result.length(), 0);
+                        cout << "[Clear] Make an order" << endl << endl;
                     } else {
                         result = "Server fail to find order file\n";
                         send(sock, result.c_str(), result.length(), 0);
@@ -179,33 +180,34 @@ int main() {
 
             /* [3-4] Cancel an order */
             if (recv_data[0] == '4') {
-                send(sock, "ok", 2, 0);
+                send(sock, "OK\n", 3, 0);
                 bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
                 recv_data[bytes_recieved] = '\0';
 
                 cout << "[Receive] " << recv_data << endl;
 
                 cancel = recv_data;
-                pre_pose = 0;
+                pre_pos = 0;
                 int isFind = 0;
-                pos = cancel.find_first_of(" ", pre_pose);
-                if (cancel.substr(pre_pose, pos).compare("Cancel_Order") == 0) {
-                    pre_pose = pos + 1;
+                pos = cancel.find_first_of(" ", pre_pos);
+                if (cancel.substr(pre_pos, pos).compare("Cancel_Order") == 0) {
+                    pre_pos = pos + 1;
 
+                    orders.clear();
                     vector <string> s;
                     s.resize(2);
 
                     ifstream infile(ofname);
                     if (infile.is_open()) {
                         cout << "[Clear] Success to open " << ofname << endl;
-                        pos = cancel.find_first_of(" ", pre_pose);
-                        cancel_id = cancel.substr(pre_pose, pos - pre_pose);
+                        pos = cancel.find_first_of(" ", pre_pos);
+                        cancel_id = cancel.substr(pre_pos, pos - pre_pos);
 
                         while (getline(infile, line)) {
                             pos = line.find_first_of(" ", 0);
-                            pre_pose = pos + 1;
+                            pre_pos = pos + 1;
                             product_id = line.substr(0, pos);
-                            order_id = line.substr(pre_pose);
+                            order_id = line.substr(pre_pos);
                             if (order_id == cancel_id) {
                                 isFind = 1;
                             } else {
@@ -234,6 +236,7 @@ int main() {
                             result = "Your order has been been cancel!\n";
                             send(sock, result.c_str(), result.length(), 0);
                         }
+                        cout << "[Clear] Cancel an order" << endl << endl;
                     } else {
                         result = "Server fail to find order file\n";
                         send(sock, result.c_str(), result.length(), 0);
