@@ -62,7 +62,7 @@ int main() {
             bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
             recv_data[bytes_recieved] = '\0';
             cout << recv_data << endl;
-            if(line == "5")
+            if (line == "5")
                 break;
         }
 

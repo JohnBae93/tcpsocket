@@ -21,27 +21,34 @@
 using namespace std;
 
 int main() {
-    vector <vector<string> > orders;
     int lsock, sock, bytes_recieved, True = 1;
     char recv_data[BYTE_MAX];
     string send_data;
     struct sockaddr_in server_addr, client_addr;
     unsigned sin_size;
 
-    char *pfname = "products.txt";
-    char *ofname = "orders.txt";
+    string *pfname = "products.txt";
+    string *ofname = "orders.txt";
 
+    int pos = 0, pre_pos = 0;
+    string line; // get line from input file
+    vector <vector<string>> orders;
+    string order; // make order string
+    string cancle; // cancle string
     string order_id;
     string product_id;
     string cancel_id;
+
+    string result; // command result to send
+
     /*[1] Create listen socket*/
     if ((lsock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("[Error] Fail to create socket\n");
+        perror("[Error] Fail to create socket");
         exit(1);
     }
 
     if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, &True, sizeof(int)) == -1) {
-        perror("[Error] Fail to set sock option\n");
+        perror("[Error] Fail to set sock option");
         exit(1);
     }
 
@@ -52,18 +59,19 @@ int main() {
 
     if (bind(lsock, (struct sockaddr *) &server_addr, sizeof(struct sockaddr))
         == -1) {
-        perror("[Error] Fail to bind\n");
+        perror("[Error] Fail to bind");
         exit(1);
     }
 
     if (listen(lsock, 5) == -1) {
-        perror("[Error] Fail to Listen\n");
+        perror("[Error] Fail to Listen");
         exit(1);
     }
 
     cout << "TCPServer Waiting for client on port: " << PORT << endl;
     fflush(stdout);
 
+    /* [2] Infinite loop for client */
     while (1) {
         sin_size = sizeof(struct sockaddr_in);
         sock = accept(lsock, (struct sockaddr *) &client_addr, &sin_size);
@@ -71,20 +79,21 @@ int main() {
         cout << "I got a connection from (" << inet_ntoa(client_addr.sin_addr)
              << " , " << ntohs(client_addr.sin_port) << ")" << endl;
 
+        /* [3] Communicate */
         while (1) {
             bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
             recv_data[bytes_recieved] = '\0';
 
             cout << "[Receive] " << recv_data << endl;
-            // fflush(stdout);
 
+            /* [3-1] List of Products */
             if (recv_data[0] == '1') {
-                string line;
                 ifstream infile(pfname);
 
                 if (infile.is_open()) {
                     cout << "[Clear] Success to open " << pfname << endl;
 
+                    send_data = ""; // init
                     while (getline(infile, line)) {
                         send_data.append(line);
                         send_data.append("\n");
@@ -94,23 +103,23 @@ int main() {
                     cout << send_data << endl;
                     infile.close();
                 } else {
-                    string result = "Some thing error in server\n";
+                    result = "Server fail to find product file\n";
                     send(sock, result.c_str(), result.length(), 0);
                     cout << "[Error] Fail to open " << pfname << " in directory" << endl;
                     break;
                 }
-
             }
+
+            /* [3-2] List of Orders */
             if (recv_data[0] == '2') {
-                string line;
                 ifstream infile(ofname);
 
                 if (infile.is_open()) {
                     cout << "[Clear] Success to open " << ofname << endl;
-                    send_data = "";
+
+                    send_data = ""; // init
                     while (getline(infile, line)) {
                         send_data.append(line);
-                        cout << "getline" << line << endl;
                         send_data.append("\n");
                     }
                     send(sock, send_data.c_str(), send_data.length(), 0);
@@ -118,69 +127,74 @@ int main() {
                     cout << send_data << endl;
                     infile.close();
                 } else {
-                    string result = "Some thing error in server\n";
+                    result = "Server fail to find order file\n";
                     send(sock, result.c_str(), result.length(), 0);
                     cout << "[Error] Fail to open " << ofname << " in directory" << endl;
                     break;
                 }
-
             }
+
+            /* [3-3] Make an order */
             if (recv_data[0] == '3') {
-                send(sock, "ok", 2, 0);
+                send(sock, "OK\n", 2, 0);
                 bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
                 recv_data[bytes_recieved] = '\0';
+
                 cout << "[Receive] " << recv_data << endl;
 
-                string order = recv_data;
-                int pos, pre_pose = 0;
+                order = recv_data;
+                pre_pose = 0;
                 pos = order.find_first_of(" ", pre_pose);
                 if (order.substr(pre_pose, pos).compare("Make_An_Order") == 0) {
                     pre_pose = pos + 1;
 
                     ofstream outfile;
                     outfile.open(ofname, ofstream::out | ofstream::app);
+
                     if (outfile.is_open()) {
                         cout << "[Clear] Success to open " << ofname << endl;
+
                         pos = order.find_first_of(" ", pre_pose);
                         order_id = order.substr(pre_pose, pos - pre_pose);
                         pre_pose = pos + 1;
+
                         product_id = order.substr(pre_pose, pos - pre_pose);
                         outfile << product_id << " " << order_id << '\n';
-
                         outfile.close();
-                        string result = "Your order has been made!\n";
+
+                        result = "Your order has been made!\n";
                         send(sock, result.c_str(), result.length(), 0);
                     } else {
-                        string result = "Some thing error in server\n";
+                        result = "Server fail to find order file\n";
                         send(sock, result.c_str(), result.length(), 0);
                         cout << "[Error] Fail to open " << ofname << " in directory" << endl;
                         break;
                     }
-
                 } else {
-                    cout << "[Error] Make order are not correct" << endl;
-
                     string result = "Your order are not correct\n";
                     send(sock, result.c_str(), result.length(), 0);
+                    cout << "[Error] Make order are not correct" << endl;
                 }
-
             }
+
+            /* [3-4] Cancel an order */
             if (recv_data[0] == '4') {
                 send(sock, "ok", 2, 0);
                 bytes_recieved = recv(sock, recv_data, BYTE_MAX, 0);
                 recv_data[bytes_recieved] = '\0';
+
                 cout << "[Receive] " << recv_data << endl;
 
-                string cancel = recv_data;
-                int pos, pre_pose = 0;
+                cancel = recv_data;
+                pre_pose = 0;
                 int isFind = 0;
                 pos = cancel.find_first_of(" ", pre_pose);
                 if (cancel.substr(pre_pose, pos).compare("Cancel_Order") == 0) {
                     pre_pose = pos + 1;
 
-                    vector<string> s;
+                    vector <string> s;
                     s.resize(2);
-                    string line;
+
                     ifstream infile(ofname);
                     if (infile.is_open()) {
                         cout << "[Clear] Success to open " << ofname << endl;
@@ -201,13 +215,14 @@ int main() {
                             }
                         }
                         infile.close();
+                        /* [3-4-1] If canceled order exist*/
                         if (isFind == 0) {
                             string result = "Your ";
                             result.append(cancel_id);
                             result.append(" does not exist!!!\n");
-                            result.append("Pleas try again");
+                            result.append("Pleas try again\n");
                             send(sock, result.c_str(), result.length(), 0);
-                        } else {
+                        } else { // not exist
                             ofstream outfile;
                             outfile.open(ofname);
                             for (int i = 0; i < orders.size(); ++i) {
@@ -216,25 +231,25 @@ int main() {
                             }
                             outfile.close();
 
-                            string result = "Your order has been been cancel!\n";
+                            result = "Your order has been been cancel!\n";
                             send(sock, result.c_str(), result.length(), 0);
                         }
                     } else {
-                        string result = "Some thing error in server\n";
+                        result = "Server fail to find order file\n";
                         send(sock, result.c_str(), result.length(), 0);
                         cout << "[Error] Fail to open " << ofname << " in directory" << endl;
                         break;
                     }
-
                 } else {
-                    cout << "[Error] Cancel order are not correct" << endl;
-
                     string result = "Your cancel are not correct\n";
                     send(sock, result.c_str(), result.length(), 0);
+                    cout << "[Error] Cancel order are not correct" << endl;
                 }
             }
+
             if (recv_data[0] == '5') {
-                cout << "[Exit] Terminate program" << endl;
+                cout << "[Exit] Terminate connect with client" << endl;
+                send(sock, "EXIT\n", 5, 0);
                 break;
             }
 
