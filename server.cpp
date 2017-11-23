@@ -32,7 +32,7 @@ int main() {
 
     int pos = 0, pre_pos = 0;
     string line; // get line from input file
-    vector <vector<string> > orders;
+    vector <vector<string>> orders;
     string order; // make order string
     string cancel; // cancle string
     string order_id;
