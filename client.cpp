@@ -25,7 +25,7 @@ int main() {
     struct hostent *host;
     struct sockaddr_in server_addr;
 
-    char* fname = "task.txt";
+    char *fname = "task.txt";
     string line;
 
     /* [1] Open input file */
