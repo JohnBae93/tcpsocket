@@ -27,8 +27,8 @@ int main() {
     struct sockaddr_in server_addr, client_addr;
     unsigned sin_size;
 
-    char* pfname = "products.txt";
-    char* ofname = "orders.txt";
+    char *pfname = "products.txt";
+    char *ofname = "orders.txt";
 
     int pos = 0, pre_pos = 0;
     string line; // get line from input file
@@ -249,17 +249,13 @@ int main() {
                     cout << "[Error] Cancel order are not correct" << endl;
                 }
             }
-
+            /* [3-5] Exit client */
             if (recv_data[0] == '5') {
                 cout << "[Exit] Terminate connect with client" << endl;
                 send(sock, "EXIT\n", 5, 0);
                 break;
             }
-
         }
         close(sock);
     }
-    close(lsock);
-
-    return 0;
 }
